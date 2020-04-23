@@ -20,7 +20,7 @@ RUN mkdir /tmp/goreman && wget https://github.com/mattn/goreman/releases/downloa
 RUN cd /tmp/goreman && unzip goreman_linux_amd64.zip
 RUN cp /tmp/goreman/goreman /bin/goreman
 
-## dump-init
+## dumb-init
 RUN wget https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64.deb -O /tmp/dumb-init.deb
 RUN dpkg -i /tmp/dumb-init.deb
 
