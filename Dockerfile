@@ -1,27 +1,57 @@
-FROM rust:1.40 as builder
+FROM ubuntu:bionic as builder
 LABEL maintainer="Xueping Yang <xueping.yang@gmail.com>"
 
-RUN apt-get -qq update; \
-    apt-get install -qqy --no-install-recommends \
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
         ca-certificates \
-        autoconf automake cmake dpkg-dev file git make patch \
-        libc-dev libc++-dev libgcc-7-dev libstdc++-7-dev  \
-        dirmngr gnupg2 lbzip2 wget xz-utils libtinfo5; \
-    rm -rf /var/lib/apt/lists/*; \
-    wget -nv -O clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.0/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz; \
-    tar xf clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz; \
-    cp -a clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/* /usr/local/; \
-    rm -rf clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04*
+        gcc \
+        libc6-dev \
+        wget \
+        libssl-dev \
+        git \
+        pkg-config \
+        libclang-dev clang; \
+    rm -rf /var/lib/apt/lists/*
+
+ENV RUSTUP_HOME=/usr/local/rustup \
+    CARGO_HOME=/usr/local/cargo \
+    PATH=/usr/local/cargo/bin:$PATH \
+    RUSTUP_VERSION=1.21.1 \
+    RUSTUP_SHA256=ad1f8b5199b3b9e231472ed7aa08d2e5d1d539198a15c5b1e53c746aad81d27b \
+    RUST_ARCH=x86_64-unknown-linux-gnu
+
+RUN set -eux; \
+    url="https://static.rust-lang.org/rustup/archive/${RUSTUP_VERSION}/${RUST_ARCH}/rustup-init"; \
+    wget "$url"; \
+    echo "${RUSTUP_SHA256} *rustup-init" | sha256sum -c -; \
+    chmod +x rustup-init
+
+ENV RUST_VERSION=1.41.0
+
+RUN set -eux; \
+    ./rustup-init -y --no-modify-path --default-toolchain $RUST_VERSION; \
+    rm rustup-init; \
+    chmod -R a+w $RUSTUP_HOME $CARGO_HOME; \
+    rustup --version; \
+    cargo --version; \
+    rustc --version; \
+    openssl version;
 
 RUN git clone https://github.com/quake/ckb-indexer.git /ckb-indexer
 # TODO add stable branch
-RUN cd /ckb-indexer && cargo build --release
-RUN cargo install --path .
+RUN cd /ckb-indexer; \
+    git checkout v0.1.0; \
+    cargo build --release
 
-FROM nginx:1.6
+FROM nginx:1.16
 LABEL maintainer="Xueping Yang <xueping.yang@gmail.com>"
 
-RUN apt-get update && apt-get install -y -no-install-recommends wget unzip software-properties-common
+RUN apt-get update; \
+    apt-get install -y --no-install-recommends \
+        wget \
+        unzip \
+        software-properties-common
 
 ## CKB node
 RUN wget https://github.com/nervosnetwork/ckb/releases/download/v0.30.2/ckb_v0.30.2_x86_64-unknown-linux-gnu.tar.gz -O /tmp/ckb_v0.30.2_x86_64-unknown-linux-gnu.tar.gz
@@ -57,7 +87,7 @@ COPY nginx.conf /conf/nginx.conf
 COPY setup.sh /conf/setup.sh
 COPY Procfile /conf/Procfile
 
-COPY --from=builder /usr/local/cargo/bin/ckb-indexer /usr/local/bin/ckb-indexer
+COPY --from=builder /ckb-indexer/target/release/ckb-indexer /usr/local/bin/ckb-indexer
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 CMD ["bash", "-c", "/conf/setup.sh && exec goreman -set-ports=false -exit-on-error -f /data/conf/Procfile start"]
