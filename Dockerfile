@@ -39,7 +39,6 @@ RUN set -eux; \
     openssl version;
 
 RUN git clone https://github.com/quake/ckb-indexer.git /ckb-indexer
-# TODO add stable branch
 RUN cd /ckb-indexer; \
     git checkout v0.1.0; \
     cargo build --release
@@ -71,12 +70,12 @@ RUN dpkg -i /tmp/dumb-init.deb
 RUN rm -rf /tmp/ckb_v0.30.2_x86_64-unknown-linux-gnu/ckb /tmp/goreman /tmp/dumb-init.deb
 RUN apt-get -y remove wget unzip software-properties-common && apt-get -y autoremove && apt-get clean
 
-# CKB network port
+## CKB network port
 EXPOSE 8114
 EXPOSE 8115
-# indexer port
+## indexer port
 EXPOSE 8116
-# nginx port
+## nginx port
 EXPOSE 8117
 
 RUN mkdir /data
