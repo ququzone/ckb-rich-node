@@ -11,7 +11,7 @@ RUN apt-get -qq update; \
     wget -nv -O https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.0/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz \
     tar xf clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz \
     cp -a clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/* /usr/local/ \
-    rm -rf clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04 install.sh
+    rm -rf clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04*
 
 RUN git clone https://github.com/quake/ckb-indexer.git /ckb-indexer
 # TODO add stable branch
