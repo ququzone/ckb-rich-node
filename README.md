@@ -9,14 +9,14 @@ ckb-rich-node
 
 ```bash
 docker build -t ckb-rich-node .
-docker run --name ckb-rich-node -p 8117:8117 -v "$PWD/data":/data -v "$PWD/indexer":/indexer ckb-rich-node
+docker run --name ckb-rich-node -d -p 8117:8117 -v "$PWD/data":/data ckb-rich-node
 ```
 
 ### Pull from DockerHub
 
 ```
 docker pull ququzone/ckb-rich-node
-docker run --name ckb-rich-node -p 8117:8117 -v "$PWD/data":/data -v "$PWD/indexer":/indexer ququzone/ckb-rich-node
+docker run --name ckb-rich-node -d -p 8117:8117 -v "$PWD/data":/data ququzone/ckb-rich-node
 ```
 
 ### CKB node RPC
