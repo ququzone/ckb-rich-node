@@ -1,4 +1,4 @@
 #!/bin/bash
 set -ex
 
-[ -d /data/mainnet ] || ckb init -c mainnet -C /data/mainnet
+[ -d /data/node ] || ckb init -c mainnet -C /data/node

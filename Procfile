@@ -1,3 +1,3 @@
-ckb: ckb run -C /data/mainnet
-indexer: sleep 5; RUST_LOG=info ckb-indexer -s /indexer
+ckb: ckb run -C /data/node
+indexer: sleep 5; RUST_LOG=info ckb-indexer -s /data/indexer
 nginx: nginx -g "daemon off;" -c /data/conf/nginx.conf

@@ -79,14 +79,14 @@ EXPOSE 8116
 EXPOSE 8117
 
 RUN mkdir /data
-RUN mkdir /indexer
-RUN mkdir /conf
+RUN mkdir /data/indexer
+RUN mkdir /data/conf
 
-COPY nginx.conf /conf/nginx.conf
-COPY setup.sh /conf/setup.sh
-COPY Procfile /conf/Procfile
+COPY nginx.conf /data/conf/nginx.conf
+COPY setup.sh /setup.sh
+COPY Procfile /data/conf/Procfile
 
 COPY --from=builder /ckb-indexer/target/release/ckb-indexer /usr/local/bin/ckb-indexer
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
-CMD ["bash", "-c", "/conf/setup.sh && exec goreman -set-ports=false -exit-on-error -f /conf/Procfile start"]
+CMD ["bash", "-c", "/setup.sh && exec goreman -set-ports=false -exit-on-error -f /data/conf/Procfile start"]
