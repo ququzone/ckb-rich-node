@@ -9,14 +9,16 @@ ckb-rich-node
 
 ```bash
 docker build -t ckb-rich-node .
-docker run --name ckb-rich-node -d -p 8117:8117 -v "$PWD/data":/data ckb-rich-node
+docker run --name ckb-rich-node-mainnet -d -e NETWORK=mainnet -p 8117:8117 -v "$PWD/data":/data ckb-rich-node
+docker run --name ckb-rich-node-testnet -d -e NETWORK=testnet -p 8117:8117 -v "$PWD/data":/data ckb-rich-node
 ```
 
 ### Pull from DockerHub
 
 ```
 docker pull ququzone/ckb-rich-node
-docker run --name ckb-rich-node -d -p 8117:8117 -v "$PWD/data":/data ququzone/ckb-rich-node
+docker run --name ckb-rich-node-mainnet -d -e NETWORK=mainnet -p 8117:8117 -v "$PWD/data":/data ququzone/ckb-rich-node
+docker run --name ckb-rich-node-testnet -d -e NETWORK=testnet -p 8117:8117 -v "$PWD/data":/data ququzone/ckb-rich-node
 ```
 
 ### CKB node RPC

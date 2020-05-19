@@ -86,6 +86,7 @@ COPY setup.sh /setup.sh
 COPY Procfile /conf/Procfile
 
 COPY --from=builder /ckb-indexer/target/release/ckb-indexer /usr/local/bin/ckb-indexer
+ENV NETWORK mainnet
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 CMD ["bash", "-c", "/setup.sh && exec goreman -set-ports=false -exit-on-error -f /conf/Procfile start"]
