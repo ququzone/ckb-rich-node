@@ -52,11 +52,6 @@ RUN apt-get update; \
         unzip \
         software-properties-common
 
-## CKB node
-RUN wget https://github.com/nervosnetwork/ckb/releases/download/v0.30.2/ckb_v0.30.2_x86_64-unknown-linux-gnu.tar.gz -O /tmp/ckb_v0.30.2_x86_64-unknown-linux-gnu.tar.gz
-RUN cd /tmp && tar xzf ckb_v0.30.2_x86_64-unknown-linux-gnu.tar.gz
-RUN cp /tmp/ckb_v0.30.2_x86_64-unknown-linux-gnu/ckb /bin/ckb
-
 ## goreman
 RUN mkdir /tmp/goreman && wget https://github.com/mattn/goreman/releases/download/v0.3.4/goreman_linux_amd64.zip -O /tmp/goreman/goreman_linux_amd64.zip
 RUN cd /tmp/goreman && unzip goreman_linux_amd64.zip
@@ -67,8 +62,8 @@ RUN wget https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.
 RUN dpkg -i /tmp/dumb-init.deb
 
 ## clean
-RUN rm -rf /tmp/ckb_v0.30.2_x86_64-unknown-linux-gnu/ckb /tmp/goreman /tmp/dumb-init.deb
-RUN apt-get -y remove wget unzip software-properties-common && apt-get -y autoremove && apt-get clean
+RUN rm -rf /tmp/goreman /tmp/dumb-init.deb
+RUN apt-get -y remove unzip software-properties-common && apt-get -y autoremove && apt-get clean
 
 ## CKB network port
 EXPOSE 8114
@@ -86,6 +81,7 @@ COPY setup.sh /setup.sh
 COPY Procfile /conf/Procfile
 
 COPY --from=builder /ckb-indexer/target/release/ckb-indexer /usr/local/bin/ckb-indexer
+ENV CKB_VERSION 0.32.0
 ENV NETWORK mainnet
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
